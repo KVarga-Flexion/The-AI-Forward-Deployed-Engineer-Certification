@@ -1,0 +1,18 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.gradio/
+__marimo__/
+.qdrant_local/
+.ruff_cache/
+.pytest_cache/
+
+# Built artifacts (regenerate with `make html`); the .ipynb mirrors ARE committed.
+_build/
+05_Agent_Architecture/sessions/skills/
+05_Agent_Architecture/sessions/mcp_oncall_server.py
+09_Infrastructure/sessions/deploy/
+
+# Dropped by `import unsloth` when loading a model locally
+unsloth_compiled_cache/

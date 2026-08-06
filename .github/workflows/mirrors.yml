@@ -1,0 +1,56 @@
+name: mirrors
+
+# The authoritative gate. Pre-commit is optional and skippable; this is not.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pinned exactly: there is no moving `v9` tag upstream, so a major-version
+      # reference would silently stay on an old release.
+      - uses: astral-sh/setup-uv@v9.0.0
+        with:
+          enable-cache: true
+
+      - name: Install the pinned environment
+        run: uv sync --frozen
+
+      - name: Check mirrors, pins, and dependency consistency
+        run: uv run python scripts/mirrors.py --check
+
+      - name: Check relative links
+        run: uv run python scripts/check_links.py
+
+      # The manifests Week 9 tells students to adapt. Nothing checked they even
+      # parsed before this, let alone that they'd survive a platform review.
+      - name: Check Kubernetes manifests
+        run: uv run --group dev python scripts/check_manifests.py
+
+      # Helpers written against an imagined future week rot silently. Every
+      # tier-2 module must name the week or challenge that consumes it.
+      - name: Check helpers have consumers
+        run: uv run python scripts/check_helpers.py
+
+      # No network, no model — every external call is stubbed, so this cannot flake.
+      - name: Test the shared helpers
+        run: uv run --group dev python -m pytest tests/ -q
+
+  # Separate job: minutes rather than seconds, and it needs a Jupyter kernel.
+  # The fast gate above only proves the two formats match -- a notebook that
+  # raises on cell three exports identically to one that works.
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v9.0.0
+        with:
+          enable-cache: true
+      - run: uv sync --frozen --group dev
+      - name: Run every notebook, both formats
+        run: uv run --group dev python scripts/check_execute.py

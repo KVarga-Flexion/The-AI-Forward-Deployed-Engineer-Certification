@@ -1,0 +1,6 @@
+# The .ipynb files are generated from the marimo .py next to them. Collapsing them
+# in GitHub diffs keeps PR review readable.
+#
+# On a merge conflict in one of these, do NOT resolve it by hand:
+#     git checkout --ours <file> && make mirrors
+*.ipynb linguist-generated=true

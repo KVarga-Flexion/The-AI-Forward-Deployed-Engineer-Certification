@@ -1,0 +1,8 @@
+# Everything in here stays local. The datasheet is the only thing that ships.
+#
+# You are pushing this to a public fork. Real company data in a public repo is
+# the single worst thing that can go wrong in this cohort, so the default is
+# "nothing leaves".
+*
+!.gitignore
+!DATASHEET.md

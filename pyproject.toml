@@ -1,0 +1,85 @@
+[project]
+name = "fde-curriculum"
+version = "0.1.0"
+description = "The AI Forward-Deployed Engineer Certification — 10-week curriculum"
+requires-python = ">=3.12"
+
+dependencies = [
+    # Pinned EXACTLY, not a range. The .ipynb mirrors embed the marimo version in
+    # their metadata, so a version bump rewrites every mirror in the repo. See
+    # CLAUDE.md, "The marimo bump ritual".
+    "marimo==0.23.16",
+    "nbformat>=5.10",          # required by `marimo export ipynb`
+    "python-dotenv>=1.2",      # helpers tier 1
+    "litellm>=1.90",           # helpers tier 2
+    "numpy>=2.0",              # from Week 3 on; the from-scratch retrieval math
+    "pillow>=11.0",            # Week 3 S2 generates its own image corpus
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pyyaml>=6.0",      # scripts/check_manifests.py
+    "nbclient>=0.10",   # scripts/check_execute.py -- runs the .ipynb mirrors
+    "ipykernel>=6.29",
+]
+
+# Week 2 runs a real model on your own machine. Opt-in, because it is a few
+# hundred MB and Weeks 1 and 3 do not need it:
+#
+#     uv sync --group local
+local = [
+    "torch>=2.6",
+    "transformers>=5.0",
+    "accelerate>=1.0",
+    "sentence-transformers>=5.0",   # the no-API embedding fallback
+]
+
+# ---------------------------------------------------------------------------
+# torch wheels: CPU by default, and that is a real choice, not a limitation.
+#
+# The CPU index ships wheels for Linux (x86_64, aarch64), Windows (amd64,
+# arm64), and macOS arm64 — so one pin covers the whole cohort.
+#
+# **Apple Silicon keeps MPS.** The macOS wheel in this index is the same build
+# PyPI serves; PyTorch does not publish a separate CPU-only Mac wheel. Nothing
+# is given up by pinning here.
+#
+# Week 2's model is 350M parameters. It generates faster than you can read on
+# any laptop CPU, so a GPU buys nothing this week. Week 8 (fine-tuning) is where
+# that changes, and that is the right time to reach for one.
+#
+# HAVE AN NVIDIA GPU AND WANT IT NOW? Change the URL below to cu130 (or cu126)
+# and re-run `uv sync --group local`. Both carry torch 2.13 for Linux *and*
+# Windows. Avoid cu129: Linux only. Avoid cu128: stuck at torch 2.11.
+#
+# AMD: ROCm is Linux-only — there are zero official Windows ROCm wheels — and
+# the newest ROCm index (rocm7.0) is pinned to torch 2.10, several versions
+# behind everything else here. Workable, but it will not share this lockfile.
+# Use a separate environment if you want it.
+# ---------------------------------------------------------------------------
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch" }]
+
+[tool.fde]
+# Packages a notebook may declare in its PEP 723 block WITHOUT a matching entry in
+# [project.dependencies] above. Everything else must match the root exactly, so two
+# students on the same lesson get the same library versions.
+#
+# Add to this list only when a dependency is genuinely notebook-local — something
+# too heavy or too platform-specific to put in every student's root env.
+sandbox-only = [
+    "torch",
+    "transformers",
+    "chromadb",
+    "qdrant-client",
+    "pydantic",
+]
+
+[tool.uv]
+package = false
