@@ -26,7 +26,7 @@ Welcome to [The AI Forward-Deployed Engineering Certification](https://maven.com
 **10 weeks. Two sessions and one technical challenge per week.**
 
 Each week is a directory. Inside it, `sessions/` holds the two notebooks and
-`challenge/` holds that week's technical challenge.
+`challenge/` holds that week's technical challenge. View full detailed curriculum schedule [here](https://absorbing-toaster-713.notion.site/The-AI-FDE-Certification-v1-1-Curriculum-Detailed-Schedule-373cd547af3d80b59666f7a43b4390de?pvs=74)
 
 > ### One use case, all ten weeks, no restarts
 >
@@ -38,29 +38,6 @@ Each week is a directory. Inside it, `sessions/` holds the two notebooks and
 > That work accumulates in [`use_case/`](./use_case/README.md) — your directory,
 > in your fork. The most common way this cohort goes wrong is switching use cases
 > halfway, so choose something you actually own and actually find annoying.
-
----
-
-## The ten weeks
-
-| Dir | Week | Sessions | Technical challenge |
-| :---: | --- | --- | --- |
-| [01](./01_Product_Engineering/README.md) | **1 · ☯️ Product Engineering** | Enterprise dev environment with Claude Code · The craft of AI consulting in 2026 | Enterprise FDE Challenge |
-| [02](./02_Getting_to_Concreteness/README.md) | **1 · 🎯 Getting to Concreteness** | *(pre-work — no session)* | The Concreteness worksheet |
-| [03](./03_Open_Weights/README.md) | **2 · 🏋️ Open Weights** | Local inference fundamentals · Synthetic data for private data | Generate synthetic data for your use case |
-| [04](./04_Retrieval/README.md) | **3 · 🔍 Retrieval** | RAG, GraphRAG, agentic search, DCI, LLM Wikis · Multimodal retrieval | MVP using the right retrieval technique |
-| [05](./05_Evals/README.md) | **4 · 📊 Evals** | Practical evals, back-testing, evals as shared language · Agent evals via simulation | Eval harness + 5-minute demo |
-| [06](./06_Agent_Architecture/README.md) | **5 · 🧑‍💻 Agent Architecture** | Student demos with client-style critique · Tools vs. skills vs. subagents vs. MCP vs. Code Mode vs. UTCP | Refined demo, and why you chose that architecture |
-| [07](./07_Guardrails/README.md) | **6 · 🛤️ Guardrails & Adversaries** | Levels of guardrails, and what each costs · Prompt injection: build the attack, then optimize it | Exploit your own app, then close it |
-| [08](./08_Memory/README.md) | **7 · 🧠 Memory & Harness Engineering** | Semantic, procedural, episodic memory and how to evaluate them · Ralph loops & spec-driven development | Memory, plus evals that test memory directly |
-| [09](./09_Fine_Tuning/README.md) | **8 · ⚖️ Fine-Tuning** | Fine-tuning in an open-weights world · Adding voice | Replace your closed model, pass the same harness |
-| [10](./10_Infrastructure/README.md) | **9 · 🏗️ Infrastructure** | Docker, Kubernetes, Terraform, CI/CD, cloud primitives · SSO/SAML/OIDC, secrets, data boundaries | The "someone else's ecosystem" checklist, at your firm |
-| [11](./11_Production/README.md) | **10 · 🏭 Production** | Observability, incident response, usage spikes · Final client readout: exec communication, scoping, pricing | Send the final report to your stakeholders |
-
-> **Directory numbers run one ahead of week numbers from `03` on**, because Week
-> 1 has two numbered directories: the Enterprise FDE Challenge and Getting to
-> Concreteness are both Week 1 pre-work, delivered at enrollment. Directory `NN`
-> is week `NN − 1` for `NN ≥ 03`.
 
 ---
 
@@ -80,12 +57,54 @@ possible. marimo gives you notebooks that are also deployable: the eval harness
 you write in Week 4 becomes a dashboard you can `marimo run` and containerize,
 and the same file becomes your Week 10 observability console.
 
+### Where are LangChain, LlamaIndex, and LangGraph?
+
+Mostly absent, and deliberately — but **not because they are bad**. Several of
+them are the right choice for production work, and you will meet teams using
+them well.
+
+The reason is that this course's unit of value is *understanding*, and a
+framework's job is to let you skip the understanding. That is a good trade when
+you already have it and a terrible one when you do not, because the day it
+breaks you are debugging an abstraction over a thing you never learned.
+
+So the pattern throughout is: **build the primitive from scratch, then name the
+library that does it properly.** A tool loop is about thirty lines; you write
+those, then you see why a real one adds schema derivation and error handling. A
+retriever is a dot product; you write that, then you use a vector store. An eval
+harness is a loop and a scorer; you write it, then Week 4 shows you Ragas.
+
+After that, picking a framework is a normal engineering decision and you can
+read its source when it misbehaves. That is the whole aim — the frameworks are
+downstream of it, and you will adopt one much faster having done this than
+having started there.
+
+> **One exception worth naming:** where a protocol or a format is the point
+> rather than the plumbing — MCP, UTCP, OpenTelemetry's conventions — you use
+> the real thing, because the value is interoperating with tools you did not
+> write.
+
+They are named where they are the right next step: **Ragas** for eval metrics,
+**Chroma** and **Qdrant** for vector stores, and **`deepagents`** — LangGraph
+underneath — for subagents, planning, and long-running work, once you have
+written the small version and can see what it adds.
+
 ---
 
 ## Getting started
 
-You need [uv](https://docs.astral.sh/uv/getting-started/installation/), Docker,
-and Claude Code. Week 1's challenge walks through installing all three,
+> ### 🧰 Start with the [prerequisites](./00_Prerequisites/README.md)
+>
+> Tooling, Claude Code, your repo, and a model — **before Session 1**, because
+> Session 1 verifies a machine that is already set up. There is a path for a
+> managed corporate laptop and a path for your own, and a checker script that
+> tells you which boxes are still open.
+>
+> Budget 45–90 minutes. On a work machine the long pole is approvals, not
+> installation, which is exactly why you want to start early.
+
+You need [uv](https://docs.astral.sh/uv/getting-started/installation/), [Docker](https://docs.docker.com/get-started/get-docker/),
+and [Claude Code](https://code.claude.com/docs/en/overview). The prerequisites walk through installing all three,
 Windows-first.
 
 > ### 🔑 You bring the model
@@ -126,9 +145,12 @@ inside the file, so it works even if you skipped `make setup`.
 ## 🧑‍🤝‍🧑 Your team
 
 - [Dr. Greg Loughnane](https://www.linkedin.com/in/gregloughnane/), Owner/CEO @ AI Makerspace
-- [Chris Brousseau](https://www.linkedin.com/in/chris-brousseau/), Instructor — co-author of *LLMs in Production*
+- [Tyler Laughlin](https://www.linkedin.com/in/tykanoalaughlin/), Instructor 
+- [Matt Sharp](https://www.linkedin.com/in/matthewsharp/), Instructor — co-author of *LLMs in Production*
 - [Jacob Kilpatrick](https://www.linkedin.com/in/jacobkilpatrickai/), Course Operations Lead @ AI Makerspace
 - ["Coach Mark" Walker](https://www.linkedin.com/in/mark-l-walker/), Student Success Manager @ AI Makerspace
+- [Ovo Okpubuluku](https://www.linkedin.com/in/ovokpus/), FDE Technical Expert @ AI Makerspace
+- [Phil Mui](https://www.linkedin.com/in/philmui/), FDE Technical Expert @ AI Makerspace
 
 ---
 
