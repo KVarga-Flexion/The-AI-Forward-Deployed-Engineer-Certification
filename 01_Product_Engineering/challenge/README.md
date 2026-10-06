@@ -552,8 +552,8 @@ coming, and doing them now teaches the wrong lesson.
 >   image can read anything baked into it.*
 
 ```powershell
-docker build -t enterprise-fde-challenge .
-docker run -p 7860:7860 --env-file ../../.env enterprise-fde-challenge
+docker build -t challenge .
+docker run -p 7860:7860 --env-file ../../.env challenge
 ```
 
 Open <http://localhost:7860> again. Same app, now in a container.
