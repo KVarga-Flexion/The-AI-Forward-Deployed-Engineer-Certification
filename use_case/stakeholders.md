@@ -11,7 +11,7 @@ Use roles, not names. This is a public fork.
 
 | Week | Who (role) | What you asked | What you learned | Follow-up |
 | --- | --- | --- | --- | --- |
-| 1 | <!-- e.g. Platform Engineering lead --> | <!-- where would a container run here? --> | <!-- --> | <!-- --> |
+| 1 | Product owner / product manager, Flexion TrailSkills 2.0 team | Requested: the eight Step 10 infrastructure questions, and a Step 12 demo of the Pathfinder endpoint | Pending — conversation not yet held as of 2026-10-13 | Book both before the TC1 deadline; log the answers in `ecosystem.md` and the demo feedback here |
 
 ---
 
