@@ -3,44 +3,174 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Rename this. It is your app. -->
-    <title>Your AI Application</title>
+    <title>Trail Pathfinder</title>
     <style>
+      :root {
+        --ink: #1f2a24;
+        --muted: #5b6b62;
+        --line: #cfd8d2;
+        --bg: #f7f8f6;
+        --card: #ffffff;
+        --accent: #2f6b4f;
+        --has: #2f6b4f;
+        --close: #9a6a00;
+        --missing: #a33a2b;
+        --error-bg: #fdecea;
+        --warn-bg: #fff6dc;
+      }
+      * { box-sizing: border-box; }
       body {
         font-family: system-ui, sans-serif;
+        color: var(--ink);
+        background: var(--bg);
         max-width: 44rem;
-        margin: 2rem auto;
-        padding: 0 1rem;
+        margin: 0 auto;
+        padding: 1rem;
         line-height: 1.5;
       }
+      header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 1rem; }
+      h1 { margin: 0.5rem 0; font-size: 1.6rem; }
+      h2 { font-size: 1.2rem; margin: 0 0 0.5rem; }
+      h3 { font-size: 1rem; margin: 1rem 0 0.25rem; }
+      .badge {
+        font-size: 0.85rem;
+        color: var(--muted);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 0.1rem 0.6rem;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+      }
+      .muted { color: var(--muted); font-size: 0.9rem; }
+      .error {
+        background: var(--error-bg);
+        border: 1px solid var(--missing);
+        border-radius: 6px;
+        padding: 0.5rem 0.75rem;
+        margin: 0.5rem 0;
+      }
+      .review {
+        background: var(--warn-bg);
+        border: 1px solid var(--close);
+        border-radius: 6px;
+        padding: 0.75rem;
+      }
+      label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+      select, input, button { font: inherit; padding: 0.5rem; max-width: 100%; }
+      select { width: 100%; }
+      button {
+        background: var(--accent);
+        color: #fff;
+        border: 0;
+        border-radius: 6px;
+        padding: 0.5rem 1.25rem;
+        cursor: pointer;
+      }
+      button:disabled { opacity: 0.6; cursor: wait; }
+      .skill-row {
+        border-top: 1px solid var(--line);
+        padding: 0.6rem 0;
+        display: grid;
+        gap: 0.35rem;
+      }
+      .skill-row .name { font-weight: 600; }
+      .skill-row .meta { color: var(--muted); font-size: 0.85rem; }
+      ul.gaps { list-style: none; padding: 0; margin: 0; }
+      ul.gaps li { padding: 0.3rem 0; border-bottom: 1px dashed var(--line); }
+      .tag {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #fff;
+        border-radius: 4px;
+        padding: 0 0.4rem;
+        margin-right: 0.4rem;
+      }
+      .tag.has { background: var(--has); }
+      .tag.close { background: var(--close); }
+      .tag.missing { background: var(--missing); }
+      .step { border-left: 4px solid var(--accent); padding: 0.4rem 0.75rem; margin: 0.5rem 0; }
+      .step .title { font-weight: 700; }
+      .summary { font-size: 1.05rem; }
       #log {
-        border: 1px solid #ccc;
+        border: 1px solid var(--line);
+        background: var(--card);
         border-radius: 6px;
         padding: 1rem;
-        min-height: 20rem;
+        min-height: 12rem;
         margin-bottom: 1rem;
         white-space: pre-wrap;
         overflow-y: auto;
       }
       .turn { margin-bottom: 1rem; }
       .who { font-weight: 600; }
-      form { display: flex; gap: 0.5rem; }
-      input { flex: 1; padding: 0.5rem; font: inherit; }
-      button { padding: 0.5rem 1rem; font: inherit; }
+      form.chat { display: flex; gap: 0.5rem; }
+      form.chat input { flex: 1; min-width: 0; }
     </style>
   </head>
   <body>
-    <h1>Your AI Application</h1>
-    <p>
-      This is a deliberately plain frontend. Making it good is your job — open
-      this file in VS Code and point Claude Code at it.
-    </p>
+    <header>
+      <h1>Trail Pathfinder</h1>
+      <span class="badge" id="model">model: checking...</span>
+    </header>
+    <div id="errors" aria-live="polite"></div>
 
-    <div id="log"></div>
-    <form id="form">
-      <input id="input" placeholder="Ask something..." autocomplete="off" />
-      <button type="submit">Send</button>
-    </form>
+    <section class="card" id="pathfinder">
+      <h2>Compare yourself to a role</h2>
+      <p class="muted">
+        Sample roles and trainings are synthetic. Rate yourself on each skill the
+        role needs; nothing you enter is saved.
+      </p>
+      <label for="role">Role</label>
+      <select id="role" disabled><option>Loading roles...</option></select>
+      <div id="skills"></div>
+      <p><button id="compare" type="button" disabled>Compare</button></p>
+      <div id="result"></div>
+    </section>
+
+    <section class="card">
+      <h2>Chat</h2>
+      <div id="log"></div>
+      <form id="form" class="chat">
+        <input id="input" placeholder="Ask something..." autocomplete="off" />
+        <button type="submit">Send</button>
+      </form>
+    </section>
+
+    <script>
+      // Plain script, so it runs even when the CDN import below fails.
+      function showError(message) {
+        const div = document.createElement("div");
+        div.className = "error";
+        div.textContent = message;
+        document.getElementById("errors").appendChild(div);
+      }
+
+      fetch("/health")
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+        .then((h) => (document.getElementById("model").textContent = `model: ${h.model}`))
+        .catch((e) => {
+          document.getElementById("model").textContent = "model: unknown";
+          showError(`Could not reach /health: ${e.message}`);
+        });
+
+      // A blocked CDN fails silently (CLAUDE.md gotcha 4). Say so on the page.
+      setTimeout(() => {
+        if (!window.gradioClientLoaded) {
+          showError(
+            "The Gradio client did not load from cdn.jsdelivr.net. Chat and Compare " +
+              "will not work on this network until that request is allowed."
+          );
+        }
+      }, 8000);
+    </script>
 
     <script type="module">
       // NOTE: this loads the Gradio client from a public CDN. On a locked-down
@@ -49,7 +179,162 @@
       // moment it moves inside the firewall.
       import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
-      const client = await Client.connect(window.location.origin);
+      window.gradioClientLoaded = true;
+
+      let client;
+      try {
+        client = await Client.connect(window.location.origin);
+      } catch (e) {
+        showError(`Could not connect to the API: ${e.message || e}`);
+      }
+
+      // --- Pathfinder ----------------------------------------------------------
+
+      const LEVELS = ["Entry", "Full Performance", "Expert"];
+      const roleSelect = document.getElementById("role");
+      const skillsBox = document.getElementById("skills");
+      const compareBtn = document.getElementById("compare");
+      const result = document.getElementById("result");
+      let sample = null;
+
+      function el(tag, text, className) {
+        const node = document.createElement(tag);
+        if (text !== undefined) node.textContent = text;
+        if (className) node.className = className;
+        return node;
+      }
+
+      function costText(cost) {
+        if (cost === null || cost === undefined) return "cost not stated";
+        return cost === 0 ? "Free" : `$${cost}`;
+      }
+
+      function currentRole() {
+        return sample.roles.find((r) => r.role === roleSelect.value);
+      }
+
+      function renderSkills() {
+        skillsBox.replaceChildren();
+        result.replaceChildren();
+        currentRole().required_skills.forEach((s, i) => {
+          const row = el("div", undefined, "skill-row");
+          const id = `rating-${i}`;
+          const label = el("label", s.skill, "name");
+          label.htmlFor = id;
+          row.appendChild(label);
+          row.appendChild(el("span", `${s.category} - role needs ${s.required_level}`, "meta"));
+          const select = el("select");
+          select.id = id;
+          select.appendChild(new Option("Not yet", ""));
+          LEVELS.forEach((lvl) => select.appendChild(new Option(lvl, lvl)));
+          row.appendChild(select);
+          skillsBox.appendChild(row);
+        });
+      }
+
+      function renderResult(res) {
+        result.replaceChildren();
+        if (res.needs_review) {
+          const box = el("div", undefined, "review");
+          box.appendChild(el("strong", "Needs review: this could not be scored."));
+          box.appendChild(el("p", res.review_reason || "No reason given."));
+          box.appendChild(el("p", "Nothing is shown rather than a guess. This goes to the manual path.", "muted"));
+          result.appendChild(box);
+          return;
+        }
+
+        result.appendChild(el("p", res.summary, "summary"));
+
+        const groups = [
+          ["has", "You have"],
+          ["close", "Close (one level below)"],
+          ["missing", "Missing"],
+        ];
+        for (const [status, heading] of groups) {
+          const rows = res.gaps.filter((g) => g.status === status);
+          result.appendChild(el("h3", `${heading} (${rows.length})`));
+          if (!rows.length) {
+            result.appendChild(el("p", "None.", "muted"));
+            continue;
+          }
+          const ul = el("ul", undefined, "gaps");
+          for (const g of rows) {
+            const li = el("li");
+            li.appendChild(el("span", status, `tag ${status}`));
+            li.appendChild(el("span", `${g.skill} `));
+            li.appendChild(
+              el("span", `(${g.category}) - you: ${g.her_level || "not yet"}, role needs: ${g.required_level}`, "muted")
+            );
+            ul.appendChild(li);
+          }
+          result.appendChild(ul);
+        }
+
+        result.appendChild(el("h3", `Next steps (${res.next_steps.length})`));
+        if (!res.next_steps.length) {
+          result.appendChild(el("p", "No training to recommend.", "muted"));
+        }
+        for (const s of res.next_steps) {
+          const div = el("div", undefined, "step");
+          div.appendChild(el("div", s.training_title, "title"));
+          div.appendChild(el("div", `${costText(s.cost_usd)} - proves: ${s.proves}`, "muted"));
+          div.appendChild(el("div", s.reason));
+          result.appendChild(div);
+        }
+
+        if (res.no_training_for.length) {
+          result.appendChild(el("h3", "No training in the catalog yet"));
+          const ul = el("ul");
+          for (const r of res.no_training_for) ul.appendChild(el("li", `${r.skill} (${r.category})`));
+          result.appendChild(ul);
+          result.appendChild(
+            el("p", "The route for these is documented experience or an attestation, not a course.", "muted")
+          );
+        }
+      }
+
+      async function compare() {
+        const role = currentRole();
+        const selects = skillsBox.querySelectorAll("select");
+        const self_ratings = role.required_skills.map((s, i) => ({
+          category: s.category,
+          skill: s.skill,
+          level: selects[i].value || null,
+        }));
+        compareBtn.disabled = true;
+        result.replaceChildren(el("p", "Comparing...", "muted"));
+        try {
+          const out = await client.predict("/compare_skills_to_role", {
+            role: role.role,
+            required_skills: role.required_skills,
+            self_ratings,
+            trainings: sample.trainings,
+          });
+          renderResult(JSON.parse(out.data[0]));
+        } catch (e) {
+          result.replaceChildren();
+          showError(`Compare failed: ${e.message || JSON.stringify(e)}`);
+        } finally {
+          compareBtn.disabled = false;
+        }
+      }
+
+      try {
+        const r = await fetch("/sample");
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        sample = await r.json();
+        roleSelect.replaceChildren(...sample.roles.map((x) => new Option(x.role, x.role)));
+        roleSelect.disabled = false;
+        roleSelect.addEventListener("change", renderSkills);
+        renderSkills();
+        compareBtn.disabled = !client;
+        compareBtn.addEventListener("click", compare);
+      } catch (e) {
+        showError(`Could not load sample roles from /sample: ${e.message}`);
+      }
+
+      // --- Chat ----------------------------------------------------------------
+
       const log = document.getElementById("log");
       const form = document.getElementById("form");
       const input = document.getElementById("input");
@@ -72,7 +357,7 @@
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const message = input.value.trim();
-        if (!message) return;
+        if (!message || !client) return;
         input.value = "";
 
         addTurn("You", message);
@@ -80,13 +365,21 @@
 
         // submit() streams; each event carries the reply so far.
         let reply = "";
-        const job = client.submit("/chat", { message, history });
-        for await (const event of job) {
-          if (event.type === "data") {
-            reply = event.data[0];
-            out.textContent = reply;
-            log.scrollTop = log.scrollHeight;
+        try {
+          const job = client.submit("/chat", { message, history });
+          for await (const event of job) {
+            if (event.type === "data") {
+              reply = event.data[0];
+              out.textContent = reply;
+              log.scrollTop = log.scrollHeight;
+            } else if (event.type === "status" && event.stage === "error") {
+              throw new Error(event.message || "the chat endpoint returned an error");
+            }
           }
+        } catch (err) {
+          out.textContent = "(no reply)";
+          showError(`Chat failed: ${err.message || err}`);
+          return;
         }
 
         history.push({ role: "user", content: message });

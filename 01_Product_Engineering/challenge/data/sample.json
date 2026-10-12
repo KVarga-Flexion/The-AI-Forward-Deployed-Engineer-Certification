@@ -1,0 +1,104 @@
+{
+  "_note": "SYNTHETIC sample data for the Pathfinder UI. Role requirements are illustrative, not the governed role library. Training titles, costs and 'proves' text are invented; no real provider is named and no wages are included. Skill names and categories are the framework's, exactly as authored.",
+  "roles": [
+    {
+      "role": "Trail Crew Member",
+      "required_skills": [
+        {"category": "Trail Construction", "skill": "Hand-Built Trail Construction", "required_level": "Entry"},
+        {"category": "Trail Construction", "skill": "Safety/Site Management", "required_level": "Entry"},
+        {"category": "Trail Maintenance", "skill": "Tread Maintenance - Hand tools", "required_level": "Full Performance"},
+        {"category": "Trail Maintenance", "skill": "Drainage Features/Water Management", "required_level": "Entry"},
+        {"category": "Trail Maintenance", "skill": "Corridor Clearing: Pruning/ Side-Cutting/ Brushing", "required_level": "Entry"}
+      ]
+    },
+    {
+      "role": "Trail Crew Leader",
+      "required_skills": [
+        {"category": "Crew Management", "skill": "Crew Training", "required_level": "Full Performance"},
+        {"category": "Crew Management", "skill": "Jobsite Safety", "required_level": "Full Performance"},
+        {"category": "Crew Management", "skill": "Performance Management", "required_level": "Entry"},
+        {"category": "Trail Construction", "skill": "Construction Specifications", "required_level": "Full Performance"},
+        {"category": "Trail Construction", "skill": "Safety/Site Management", "required_level": "Full Performance"},
+        {"category": "Program Administration", "skill": "Communications", "required_level": "Entry"}
+      ]
+    },
+    {
+      "role": "Trail Designer",
+      "required_skills": [
+        {"category": "Project Planning and Design", "skill": "Field Design: Trail Alignment Identification and Marking", "required_level": "Full Performance"},
+        {"category": "Project Planning and Design", "skill": "Corridor Planning", "required_level": "Entry"},
+        {"category": "Project Planning and Design", "skill": "Trail Specifications", "required_level": "Full Performance"},
+        {"category": "Project Planning and Design", "skill": "Trail Inventory and Assessment", "required_level": "Entry"},
+        {"category": "Project Planning and Design", "skill": "Compliance and Permitting", "required_level": "Entry"}
+      ]
+    }
+  ],
+  "trainings": [
+    {
+      "title": "Hand Tools and Tread Field Day",
+      "skills_taught": [
+        {"category": "Trail Construction", "skill": "Hand-Built Trail Construction", "required_level": "Entry"},
+        {"category": "Trail Maintenance", "skill": "Tread Maintenance - Hand tools", "required_level": "Full Performance"}
+      ],
+      "cost_usd": 0,
+      "proves": "attendance record from the host crew",
+      "alignment_approved": true
+    },
+    {
+      "title": "Water on the Trail: Drainage Basics",
+      "skills_taught": [
+        {"category": "Trail Maintenance", "skill": "Drainage Features/Water Management", "required_level": "Entry"}
+      ],
+      "cost_usd": 0,
+      "proves": "completion badge for the video series",
+      "alignment_approved": true
+    },
+    {
+      "title": "Crew Leader Fundamentals",
+      "skills_taught": [
+        {"category": "Crew Management", "skill": "Crew Training", "required_level": "Full Performance"},
+        {"category": "Crew Management", "skill": "Performance Management", "required_level": "Entry"}
+      ],
+      "cost_usd": 200,
+      "proves": "certificate of completion",
+      "alignment_approved": true
+    },
+    {
+      "title": "Intro to Safety Talks",
+      "skills_taught": [
+        {"category": "Crew Management", "skill": "Jobsite Safety", "required_level": "Entry"}
+      ],
+      "cost_usd": 0,
+      "proves": "attendance record",
+      "alignment_approved": true
+    },
+    {
+      "title": "Reading Trail Specs",
+      "skills_taught": [
+        {"category": "Trail Construction", "skill": "Construction Specifications", "required_level": "Full Performance"},
+        {"category": "Trail Maintenance", "skill": "Maintenance Specifications", "required_level": "Entry"}
+      ],
+      "cost_usd": 0,
+      "proves": "attendance record",
+      "alignment_approved": true
+    },
+    {
+      "title": "Layout and Flagging Workshop",
+      "skills_taught": [
+        {"category": "Project Planning and Design", "skill": "Field Design: Trail Alignment Identification and Marking", "required_level": "Full Performance"}
+      ],
+      "cost_usd": 120,
+      "proves": "certificate of completion",
+      "alignment_approved": true
+    },
+    {
+      "title": "Trail Condition Surveys",
+      "skills_taught": [
+        {"category": "Project Planning and Design", "skill": "Trail Inventory and Assessment", "required_level": "Entry"}
+      ],
+      "cost_usd": 45,
+      "proves": "attendance record",
+      "alignment_approved": true
+    }
+  ]
+}

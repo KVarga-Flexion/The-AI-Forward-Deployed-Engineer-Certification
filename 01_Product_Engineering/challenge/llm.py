@@ -11,7 +11,12 @@ That property matters more than it looks like it does right now -- see the
 import json
 import os
 
+import litellm
 from litellm import completion
+
+# litellm prints a "Provider List" banner on every call with a custom model
+# name. Noise only; the calls succeed. Silence it.
+litellm.suppress_debug_info = True
 
 # LiteLLM picks the provider from the model string:
 #   "gpt-4.1-mini"                    -> OpenAI
@@ -52,3 +57,26 @@ def stream_reply(message: str, history: list[dict] | None = None):
         if piece:
             reply += piece
             yield reply
+
+
+def complete(prompt: str, *, system: str | None = None, timeout: float = 20) -> str:
+    """Return one whole reply, no streaming, or raise.
+
+    For callers that need the full text before they can check it (pathfinder
+    validates every line). The explicit timeout is the point: without one a
+    slow provider hangs the request, and the caller's template fallback never
+    gets its chance (BR-10.7).
+    """
+    messages = [{"role": "system", "content": system}] if system else []
+    messages.append({"role": "user", "content": prompt})
+
+    kwargs = {"model": MODEL, "messages": messages, "timeout": timeout}
+    if API_BASE:
+        kwargs["api_base"] = API_BASE
+    if EXTRA_HEADERS:
+        kwargs["extra_headers"] = EXTRA_HEADERS
+
+    content = completion(**kwargs).choices[0].message.content
+    if not content:
+        raise ValueError("model returned an empty reply")
+    return content
