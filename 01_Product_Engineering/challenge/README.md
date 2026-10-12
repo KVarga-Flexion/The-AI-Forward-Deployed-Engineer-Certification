@@ -1125,6 +1125,8 @@ being up.
    list, nothing else looks like it. `recommend_training` was rejected because
    the recommendation is the last third of the output and is sometimes empty.
 
+![Pathfinder panel showing the has / close / missing groups and two next steps](docs/pathfinder-ui.jpg)
+
 **UI.** A Pathfinder panel on the same page: role picker from `/sample`
 (synthetic roles and trainings), a level picker per required skill, and the
 result rendered as the three groups, the steps, and the no-training list.
